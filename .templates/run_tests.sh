@@ -3,15 +3,24 @@
 if [ -z "$1" ]; then
     echo "Ошибка: необходимо передать file executable."
     echo "Например, для С++ ./file_binary или для Python python3 file.py"
+    exit 1
+fi
 
-file_executable = $1
+file_executable=$1
 
-for dir in "$SCRIPT_DIR"/*/; do
+for dir in /tests/*/; do
     if [ -d "$dir" ]; then
-        file_executable < tests/$dir.txt
-do
-  echo "Running test case $i"
-  ./5 < tests/input$i.txt > output$i.txt
-  diff output$i.txt tests/expected_output$i.txt && echo "✅ Passed" || echo "❌ Failed"
-done
+        echo "🔎 Running test in $dir"
+        input_file="${dir}input.txt"
+        expected_file="${dir}expected_output.txt"
+        output_file="${dir}output.txt"
 
+        $file_executable < "$input_file" > "$output_file"
+        if diff "$output_file" "$expected_file"; then
+            echo "✅ Passed"
+        else
+            echo "❌ Failed"
+        fi
+        rm "$output_file"
+    fi
+done
